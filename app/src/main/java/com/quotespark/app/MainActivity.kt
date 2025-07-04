@@ -17,8 +17,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -35,22 +40,33 @@ import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
+
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             QuoteSparkTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val context = LocalContext.current
-                    QuoteScreen(paddingValues = innerPadding,context)
+                val context = LocalContext.current
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            title = { Text("QuoteSpark") },
+                            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                        )
+                    }
+                ) { innerPadding ->
+                    QuoteScreen(paddingValues = innerPadding, context)
                 }
             }
         }
     }
 }
+
 @Composable
-fun QuoteScreen(paddingValues: PaddingValues,context: Context) {
+fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
     val quotes = remember { loadQuotesFromAssets(context) }
     var currentQuote by remember { mutableStateOf(getRandomQuote(quotes)) }
 
@@ -69,10 +85,10 @@ fun QuoteScreen(paddingValues: PaddingValues,context: Context) {
                     .wrapContentHeight()
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                shape = androidx.compose.material3.MaterialTheme.shapes.medium,
-                elevation = androidx.compose.material3.CardDefaults.cardElevation(defaultElevation = 6.dp),
-                colors = androidx.compose.material3.CardDefaults.cardColors(
-                    containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surfaceVariant
+                shape = MaterialTheme.shapes.medium,
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
                 Column(
@@ -105,14 +121,13 @@ fun QuoteScreen(paddingValues: PaddingValues,context: Context) {
 }
 
 
-
-
 fun loadQuotesFromAssets(context: Context): List<Quote> {
     val json = context.assets.open("quotes.json").bufferedReader().use { it.readText() }
     val gson = Gson()
     val type = object : TypeToken<List<Quote>>() {}.type
     return gson.fromJson(json, type)
 }
+
 fun getRandomQuote(quotes: List<Quote>): Quote {
     return quotes.random()
 }
