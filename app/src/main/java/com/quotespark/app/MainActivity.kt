@@ -110,7 +110,7 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
                             Toast.makeText(context, "Quote copied!", Toast.LENGTH_SHORT).show()
                         },
                         modifier = Modifier
-                            .align(Alignment.TopStart)
+                            .align(Alignment.TopEnd)
                             .padding(8.dp)
                     ) {
                         Icon(
@@ -118,6 +118,7 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
                             contentDescription = "Copy Quote"
                         )
                     }
+
 
                     // Quote Content
                     Column(
