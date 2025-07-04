@@ -101,7 +101,7 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
                 )
             ) {
                 Box {
-                    // Clipboard Icon Button at top-left
+                    // Copy Button (Top-Right)
                     IconButton(
                         onClick = {
                             val combinedText = "\"${currentQuote.quote}\"\n- ${currentQuote.author}"
@@ -111,7 +111,7 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
                         },
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .padding(8.dp)
+                            .padding(top = 8.dp, end = 48.dp) // leave space for share icon
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.outline_content_copy_24),
@@ -119,6 +119,27 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
                         )
                     }
 
+                    // Share Button (Top-Right)
+                    IconButton(
+                        onClick = {
+                            val combinedText = "\"${currentQuote.quote}\"\n- ${currentQuote.author}"
+                            val sendIntent = android.content.Intent().apply {
+                                action = android.content.Intent.ACTION_SEND
+                                putExtra(android.content.Intent.EXTRA_TEXT, combinedText)
+                                type = "text/plain"
+                            }
+                            val shareIntent = android.content.Intent.createChooser(sendIntent, "Share quote via")
+                            context.startActivity(shareIntent)
+                        },
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp) // Rightmost
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_share_24),
+                            contentDescription = "Share Quote"
+                        )
+                    }
 
                     // Quote Content
                     Column(
@@ -140,6 +161,7 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
                         )
                     }
                 }
+
             }
 
             Button(onClick = {
