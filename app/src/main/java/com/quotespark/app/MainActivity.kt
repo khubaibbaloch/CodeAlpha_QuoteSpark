@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,21 +43,21 @@ class MainActivity : ComponentActivity() {
             QuoteSparkTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val context = LocalContext.current
-                    QuoteScreen(context)
+                    QuoteScreen(paddingValues = innerPadding,context)
                 }
             }
         }
     }
 }
 @Composable
-fun QuoteScreen(context: Context) {
+fun QuoteScreen(paddingValues: PaddingValues,context: Context) {
     val quotes = remember { loadQuotesFromAssets(context) }
     var currentQuote by remember { mutableStateOf(getRandomQuote(quotes)) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(paddingValues),
         contentAlignment = Alignment.Center
     ) {
         Column(
