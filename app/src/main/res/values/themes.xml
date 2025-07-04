@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
 
-    <style name="Theme.QuoteSpark" parent="android:Theme.Material.Light.NoActionBar" />
+<resources xmlns:tools="http://schemas.android.com/tools">
+<style name="Theme.QuoteSpark" parent="android:Theme.Material.Light.NoActionBar">
+    <!-- Customize your main app theme here -->
+    <item name="android:windowSplashScreenBackground" tools:targetApi="31">@color/white</item>
+    <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="31">@drawable/quote_spark</item>
+    <item name="android:windowSplashScreenIconBackgroundColor" tools:targetApi="31">@color/white</item>
+
+    <!-- Keep status bar transparent during splash -->
+    <item name="android:statusBarColor">@android:color/transparent</item>
+</style>
 </resources>
