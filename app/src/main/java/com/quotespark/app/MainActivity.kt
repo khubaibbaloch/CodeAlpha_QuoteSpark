@@ -8,10 +8,12 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -79,96 +81,89 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
 
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues),
-        contentAlignment = Alignment.Center
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+
+        // Quote Card
+        Card(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .animateContentSize(),
+            shape = MaterialTheme.shapes.medium,
+            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
         ) {
-            Card(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                shape = MaterialTheme.shapes.medium,
-                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
-                Box {
-                    // Copy Button (Top-Right)
-                    IconButton(
-                        onClick = {
-                            val combinedText = "\"${currentQuote.quote}\"\n- ${currentQuote.author}"
-                            val clip = ClipData.newPlainText("Quote", combinedText)
-                            clipboardManager.setPrimaryClip(clip)
-                            Toast.makeText(context, "Quote copied!", Toast.LENGTH_SHORT).show()
-                        },
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(top = 8.dp, end = 48.dp) // leave space for share icon
-                    ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+
+                // Top-right Row with Icon Buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    IconButton(onClick = {
+                        val combinedText = "\"${currentQuote.quote}\"\n- ${currentQuote.author}"
+                        val clip = ClipData.newPlainText("Quote", combinedText)
+                        clipboardManager.setPrimaryClip(clip)
+                        Toast.makeText(context, "Quote copied!", Toast.LENGTH_SHORT).show()
+                    }) {
                         Icon(
                             painter = painterResource(R.drawable.outline_content_copy_24),
                             contentDescription = "Copy Quote"
                         )
                     }
 
-                    // Share Button (Top-Right)
-                    IconButton(
-                        onClick = {
-                            val combinedText = "\"${currentQuote.quote}\"\n- ${currentQuote.author}"
-                            val sendIntent = android.content.Intent().apply {
-                                action = android.content.Intent.ACTION_SEND
-                                putExtra(android.content.Intent.EXTRA_TEXT, combinedText)
-                                type = "text/plain"
-                            }
-                            val shareIntent = android.content.Intent.createChooser(sendIntent, "Share quote via")
-                            context.startActivity(shareIntent)
-                        },
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(8.dp) // Rightmost
-                    ) {
+                    IconButton(onClick = {
+                        val combinedText = "\"${currentQuote.quote}\"\n- ${currentQuote.author}"
+                        val sendIntent = android.content.Intent().apply {
+                            action = android.content.Intent.ACTION_SEND
+                            putExtra(android.content.Intent.EXTRA_TEXT, combinedText)
+                            type = "text/plain"
+                        }
+                        val shareIntent = android.content.Intent.createChooser(sendIntent, "Share quote via")
+                        context.startActivity(shareIntent)
+                    }) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_share_24),
                             contentDescription = "Share Quote"
                         )
                     }
-
-                    // Quote Content
-                    Column(
-                        modifier = Modifier
-                            .padding(top = 48.dp, bottom = 24.dp, start = 24.dp, end = 24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "“${currentQuote.quote}”",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Medium,
-                            lineHeight = 28.sp
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "- ${currentQuote.author}",
-                            fontSize = 16.sp,
-                            fontStyle = FontStyle.Italic
-                        )
-                    }
                 }
 
+                // Quote Text
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "“${currentQuote.quote}”",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        lineHeight = 28.sp
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "- ${currentQuote.author}",
+                        fontSize = 16.sp,
+                        fontStyle = FontStyle.Italic
+                    )
+                }
             }
+        }
 
-            Button(onClick = {
-                currentQuote = getRandomQuote(quotes)
-            }) {
-                Text("New Quote")
-            }
+        // New Quote Button
+        Button(onClick = {
+            currentQuote = getRandomQuote(quotes)
+        }) {
+            Text("New Quote")
         }
     }
 }
