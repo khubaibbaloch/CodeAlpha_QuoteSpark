@@ -70,6 +70,8 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
     val quotes = remember { loadQuotesFromAssets(context) }
     var currentQuote by remember { mutableStateOf(getRandomQuote(quotes)) }
 
+    val clipboardManager = LocalContext.current.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -108,6 +110,17 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
                         fontSize = 16.sp,
                         fontStyle = FontStyle.Italic
                     )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(onClick = {
+                        val combinedText = "\"${currentQuote.quote}\"\n- ${currentQuote.author}"
+                        val clip = android.content.ClipData.newPlainText("Quote", combinedText)
+                        clipboardManager.setPrimaryClip(clip)
+                        android.widget.Toast.makeText(context, "Quote copied!", android.widget.Toast.LENGTH_SHORT).show()
+                    }) {
+                        Text("Copy")
+                    }
                 }
             }
 
@@ -119,6 +132,7 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
         }
     }
 }
+
 
 
 fun loadQuotesFromAssets(context: Context): List<Quote> {
