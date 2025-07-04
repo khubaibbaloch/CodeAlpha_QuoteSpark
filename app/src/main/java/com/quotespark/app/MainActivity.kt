@@ -1,7 +1,10 @@
 package com.quotespark.app
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,10 +18,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,6 +39,7 @@ import com.quotespark.app.data.model.Quote
 import com.quotespark.app.ui.theme.QuoteSparkTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -70,7 +77,7 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
     val quotes = remember { loadQuotesFromAssets(context) }
     var currentQuote by remember { mutableStateOf(getRandomQuote(quotes)) }
 
-    val clipboardManager = LocalContext.current.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+    val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
     Box(
         modifier = Modifier
@@ -93,33 +100,43 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "“${currentQuote.quote}”",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Medium,
-                        lineHeight = 28.sp
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "- ${currentQuote.author}",
-                        fontSize = 16.sp,
-                        fontStyle = FontStyle.Italic
-                    )
+                Box {
+                    // Clipboard Icon Button at top-left
+                    IconButton(
+                        onClick = {
+                            val combinedText = "\"${currentQuote.quote}\"\n- ${currentQuote.author}"
+                            val clip = ClipData.newPlainText("Quote", combinedText)
+                            clipboardManager.setPrimaryClip(clip)
+                            Toast.makeText(context, "Quote copied!", Toast.LENGTH_SHORT).show()
+                        },
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.outline_content_copy_24),
+                            contentDescription = "Copy Quote"
+                        )
+                    }
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Button(onClick = {
-                        val combinedText = "\"${currentQuote.quote}\"\n- ${currentQuote.author}"
-                        val clip = android.content.ClipData.newPlainText("Quote", combinedText)
-                        clipboardManager.setPrimaryClip(clip)
-                        android.widget.Toast.makeText(context, "Quote copied!", android.widget.Toast.LENGTH_SHORT).show()
-                    }) {
-                        Text("Copy")
+                    // Quote Content
+                    Column(
+                        modifier = Modifier
+                            .padding(top = 48.dp, bottom = 24.dp, start = 24.dp, end = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "“${currentQuote.quote}”",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium,
+                            lineHeight = 28.sp
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "- ${currentQuote.author}",
+                            fontSize = 16.sp,
+                            fontStyle = FontStyle.Italic
+                        )
                     }
                 }
             }
@@ -132,7 +149,6 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
         }
     }
 }
-
 
 
 fun loadQuotesFromAssets(context: Context): List<Quote> {
