@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
@@ -94,7 +95,7 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
             modifier = Modifier
                 .wrapContentHeight()
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(16.dp)
                 .animateContentSize(),
             shape = MaterialTheme.shapes.medium,
             elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -102,7 +103,7 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
                 containerColor = MaterialTheme.colorScheme.surfaceVariant
             )
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)) {
 
                 // Top-right Row with Icon Buttons
                 Row(
@@ -114,10 +115,12 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
                         val clip = ClipData.newPlainText("Quote", combinedText)
                         clipboardManager.setPrimaryClip(clip)
                         Toast.makeText(context, "Quote copied!", Toast.LENGTH_SHORT).show()
-                    }) {
+                    },
+                        modifier = Modifier.size(30.dp)) {
                         Icon(
                             painter = painterResource(R.drawable.outline_content_copy_24),
-                            contentDescription = "Copy Quote"
+                            contentDescription = "Copy Quote",
+                            modifier = Modifier.size(20.dp)
                         )
                     }
 
@@ -130,10 +133,11 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
                         }
                         val shareIntent = android.content.Intent.createChooser(sendIntent, "Share quote via")
                         context.startActivity(shareIntent)
-                    }) {
+                    }, modifier = Modifier.size(30.dp)) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_share_24),
-                            contentDescription = "Share Quote"
+                            contentDescription = "Share Quote",
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
@@ -145,7 +149,7 @@ fun QuoteScreen(paddingValues: PaddingValues, context: Context) {
                 ) {
                     Text(
                         text = "“${currentQuote.quote}”",
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Medium,
                         lineHeight = 28.sp
                     )
